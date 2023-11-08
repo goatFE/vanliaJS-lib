@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>datepicker</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            td {
+                border: 1px solid;
+                text-align: center;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            Date: <input type="text" id="date" />
+            <div id="calendar" style="width: 300px; display: none">
+                <div>
+                    <button id="prev_btn" onclick="changeMonth('-1')">이전</button>
+                    <span id="selected_date"></span>
+                    <button id="next_btn" onclick="changeMonth('1')">다음</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>일</th>
+                            <th>월</th>
+                            <th>화</th>
+                            <th>수</th>
+                            <th>목</th>
+                            <th>금</th>
+                            <th>토</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar_contents"></tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            console.log(document.getElementById('date'));
+            let days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            document.getElementById('date').addEventListener('click', () => {
+                const $calendar = document.getElementById('calendar');
+                if ($calendar.style.display === '') {
+                    $calendar.style.display = 'none';
+                } else {
+                    $calendar.style.display = '';
+                } 
+            });
+
+            const current_year = new Date().getFullYear();
+            const current_month = new Date().getMonth() + 1;
+            const current_date = new Date().getDate();
+            const current_year_month = current_year + '-' + current_month;
+
+            changeDate(current_year, current_month);
+
+            function changeDate(year, month) {
+                let start_day= new Date(year+'-'+month+'-01').getDay();
+                let selected_year_month = year + '-' + month;
+                document.getElementById('selected_date').innerHTML = `${year}-${month}`;
+
+                let contents = [];
+                for (let i=1; i<days[month-1] + 1 + start_day; i++) {
+                    if (i === 1) {
+                        contents.push('<tr>');
+                    } else if (i % 7 === 1) {
+                        contents.push('</tr>')
+                    } 
+                    if (i <= start_day) {
+                        contents.push('<td> </td>')
+                        continue;
+                    }
+                    
+                    contents.push(`<td onclick="selectDate(event)" style=${current_date + start_day === i && current_year_month ===  selected_year_month ? "background:grey" : ''}>${i - start_day}</td>`);
+                }
+                const $contents = document.getElementById('calendar_contents');
+                $contents.innerHTML = contents.join('');
+            }
+
+            function changeMonth(direction) {
+                let [year, month] = document.getElementById('selected_date').textContent.split('-');
+
+                let next_month = parseInt(month) + parseInt(direction);
+
+                if (next_month === 0) {
+                    console.log('prev year change!!') 
+                    let next_year = parseInt(year) - 1;
+                    changeDate(next_year, 12);
+                } else if (next_month === 13) {
+                    console.log('next year change!!') 
+                    let next_year = parseInt(year) + 1;
+                    changeDate(next_year, 1);
+                } else {
+                    changeDate(year, next_month);
+                }
+
+            }
+
+            function selectDate(event) {
+                console.log(event.target.innerText);
+                let $selected_date = document.getElementById('selected_date');
+                document.getElementById('date').value = $selected_date.innerText + '-' + event.target.innerText;
+            }
+        </script>
+    </body>
+</html>
