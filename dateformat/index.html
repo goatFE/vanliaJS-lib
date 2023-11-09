@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>날짜포맷터</title>
+        <style></style>
+    </head>
+    <body>
+        <h3>getCurrentDate</h3>
+        <input type="text" id="input_format1" placeholder="YYYY, MM, DD"/>
+        <button type="button" onclick="getCurrentDate()">getCurrentDate</button>
+        <h3 id="result1" style="color:rgb(127, 185, 255)"></h3>
+        <hr />
+
+        <h3>convertDateFormat</h3>
+        <input type="number" id="input_yyyymmdd" style="width: 200px" placeholder="날짜를 입력하세요(yyyymmdd)"/>
+        <input type="text" id="input_format2" placeholder="원하는 포맷을 입력하세요"/>
+        <button type="button" onclick="convertDateFormat()">convertDateFormat</button>
+        <h3 id="result2" style="color:rgb(127, 185, 255)"></h3>
+        <hr />
+
+        <h3>getIntervalDate</h3>
+        <input type="number" id="input_intervalDay" style="width: 200px" placeholder="현재날짜를 기준으로 며칠전, 며칠후"/>
+        <input type="text" id="input_format3" placeholder="원하는 포맷을 입력하세요"/>
+        <button type="button" onclick="getIntervalDate()">getIntervalDate</button>
+        <h3 id="result3" style="color:rgb(127, 185, 255)"></h3>
+        <script>
+            function getCurrentDate() {
+                let format = document.getElementById('input_format1').value; 
+                
+                if (!format.includes('YYYY') && !format.includes('MM') && !format.includes('DD')) {
+                    alert('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                    throw new Error('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                }
+                const date = new Date();
+                const current_year = date.getFullYear();
+                const current_month = (date.getMonth() + 1).toString().padStart(2,0);
+                const current_day = date.getDate().toString().padStart(2,0);
+                
+                format = format.replace('YYYY', current_year);
+                format = format.replace('MM', current_month);
+                format = format.replace('DD', current_day);
+                
+                document.getElementById('result1').innerHTML = format;
+            }
+
+            function convertDateFormat() {
+                let yyyymmdd = document.getElementById('input_yyyymmdd').value;
+                let format = document.getElementById('input_format2').value; 
+
+                if (yyyymmdd === '') {
+                    alert('날짜를 입력하세요(yyyymmdd)')
+                    throw new Error('날짜를 입력하세요(yyyymmdd)')
+                }
+                if (!format.includes('YYYY') || !format.includes('MM') || !format.includes('DD')) {
+                    alert('YYYY, MM, DD를 전부 넣어주세요')
+                    throw new Error('YYYY, MM, DD를 전부 넣어주세요')
+                }
+                if (!format.includes('YYYY') && !format.includes('MM') && !format.includes('DD')) {
+                    alert('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                    throw new Error('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                }
+                const year = yyyymmdd.substring(0, 4);
+                const month = yyyymmdd.substring(4, 6);
+                const day = yyyymmdd.substring(6, 8);
+
+                format = format.replace('YYYY', year);
+                format = format.replace('MM', month);
+                format = format.replace('DD', day);
+
+                document.getElementById('result2').innerHTML = format;
+            }
+
+            function getIntervalDate() {
+                let intervalDay = document.getElementById('input_intervalDay').value;
+                let format = document.getElementById('input_format3').value; 
+                
+                if (intervalDay === '') {
+                    alert('intervalDay 입력하세요')
+                    throw new Error('intervalDay 입력하세요')
+                }
+                if (!format.includes('YYYY') || !format.includes('MM') || !format.includes('DD')) {
+                    alert('YYYY, MM, DD를 전부 넣어주세요')
+                    throw new Error('YYYY, MM, DD를 전부 넣어주세요')
+                }
+                if (!format.includes('YYYY') && !format.includes('MM') && !format.includes('DD')) {
+                    alert('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                    throw new Error('잘못된 형식입니다. YYYY, MM, DD를 활용해 넣어주세요')
+                }
+                
+                const millisecondsDay = 60 * 60 * 24 * 1000;
+                const date = new Date().getTime() +  millisecondsDay * intervalDay;
+                const resultDate = new Date(date);
+
+                format = format.replace('YYYY', resultDate.getFullYear());
+                format = format.replace('MM', (resultDate.getMonth() + 1).toString().padStart(2,0));
+                format = format.replace('DD', (resultDate.getDate().toString().padStart(2,0)));
+
+                document.getElementById('result3').innerHTML = format;
+            }
+
+            const handleKeydownInputFormat = (event) => event.keyCode === 13 && getCurrentDate();
+            document.getElementById('input_format1').addEventListener('keydown', handleKeydownInputFormat);
+        </script>
+    </body>
+</html>
