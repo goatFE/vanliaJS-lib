@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>정수형 숫자만 / 소수점 input 필드</title>
+    </head>
+    <body>
+        <h3>정수형 숫자만 입력 가능한 input 필드</h3>
+        <input type="text" onkeydown="checkNumber(event, 'int')" oninput="checkKR(event, 'int')"/>
+
+        <h3>소수점을 포함한 input 필드</h3>
+        <input type="text" onkeydown="checkNumber(event, 'float')" oninput="checkKR(event, 'float')" />
+    </body>
+    <script>
+        function checkNumber(event, type) {
+            // 숫자, 백스페이스, 삭제 키, 화살표 키
+            if (!(
+                (event.key >= '0' && event.key <= '9') || 
+                event.keyCode === 8 || 
+                event.keyCode === 46 ||
+                event.keyCode === 37 ||
+                event.keyCode === 39 || 
+                (type === 'float' && event.keyCode === 190))) 
+            {
+                event.preventDefault();
+            }   
+        }
+        
+        // oninput - 입력 필드에 입력된 값의 변화를 감지(입력 필드에 데이터가 입력될 때마다 발생), 키보드 입력뿐만 아니라 마우스를 통한 붙여넣기 같은 다른 형태의 입력도 감지함
+        function checkKR(event, type) {
+            // 영문, 숫자와 달리 한글은 여러 키 조합이라서 checkNumber로 걸러지지않음. 따로 정규식으로 제한해줘야함
+            const regEx = type === 'int' ? /[^0-9]/g : /[^0-9.]/g;
+            event.target.value = event.target.value.replace(regEx, "");
+        }
+    </script>
+</html>
