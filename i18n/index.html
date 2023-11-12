@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>다국어(i18n)</title>
+    </head>
+    <body>
+        <h3 data-i18n="Choose your language">언어를 선택하세요</h3>
+        <select id="lang" onchange="changeLang(event)" style="width: 200px">
+            <option value="ko">한국어</option>
+            <option value="en">영어</option>
+        </select>
+        <h3 data-i18n="name">이름</h3><input id="name" type="text" />
+        <h3 data-i18n="age">나이</h3><input id="age" type="text" />
+        <h3 data-i18n="company">회사</h3><input id="company" type="text" />
+        <button type="button" data-i18n="save" onclick="saveUserInfo()">등록하기</button>
+
+        <hr/>
+        <h3 data-i18n="result" style="color:lightblue; display: none"></h3>
+    </body>
+    <script>
+        const i18n = {
+            en: {
+                'Choose your language': 'Choose your language',
+                'name': 'name',
+                'age': 'age',
+                'company': 'company',
+                'result': 'My name is {name}, I am {age} years old, and I work at {company}.',
+                'save': 'save',
+                'alert': 'Please enter all information'
+            },
+            ko: {
+                'Choose your language': '언어를 선택하세요',
+                'name': '이름',
+                'age': '나이',
+                'company': '회사',
+                'result': '제 이름은 {name}이고, {age}세 입니다, {company} 회사에 재직중 입니다.',
+                'save': '등록하기',
+                'alert': '내용을 전부 입력해주세요'
+            }
+        }
+
+        var userDB = null;
+
+        function changeLang(e) {
+            const language = e.target.value;
+            const i18ns = document.querySelectorAll('[data-i18n]');
+
+            [...i18ns].forEach((item) => {
+                item.textContent = userDB ? t(i18n[language][item.getAttribute('data-i18n')], userDB) : i18n[language][item.getAttribute('data-i18n')];
+            });
+        }
+
+        function t(form, params={}) {
+            return form.replace(/{[^}]*}/g, match => params[match.slice(1, -1)])
+        }
+
+        function saveUserInfo() {
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const company = document.getElementById('company').value;
+            const language = document.getElementById('lang').value;
+            
+            if (name === '' || age === '' || company === '') {
+                alert(i18n[language]['alert']);
+                return false;
+            }
+
+            userDB = {name, age, company};// DB 등록
+
+            document.querySelector('[data-i18n=result]').textContent = t(i18n[language]['result'], userDB);
+            document.querySelector('[data-i18n=result]').style.display = '';
+        }
+    </script>
+</html>
