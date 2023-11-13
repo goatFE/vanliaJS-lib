@@ -40,7 +40,7 @@
                 format = format.replace('MM', current_month);
                 format = format.replace('DD', current_day);
                 
-                document.getElementById('result1').innerHTML = format;
+                document.getElementById('result1').textContent = format;
             }
 
             function convertDateFormat() {
@@ -67,7 +67,7 @@
                 format = format.replace('MM', month);
                 format = format.replace('DD', day);
 
-                document.getElementById('result2').innerHTML = format;
+                document.getElementById('result2').textContent = format;
             }
 
             function getIntervalDate() {
@@ -95,7 +95,7 @@
                 format = format.replace('MM', (resultDate.getMonth() + 1).toString().padStart(2,0));
                 format = format.replace('DD', (resultDate.getDate().toString().padStart(2,0)));
 
-                document.getElementById('result3').innerHTML = format;
+                document.getElementById('result3').textContent = format;
             }
 
             const handleKeydownInputFormat = (event) => event.keyCode === 13 && getCurrentDate();
