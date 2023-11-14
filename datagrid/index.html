@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>데이터 그리드(정렬, 필터)</title>
+        <style>
+            table {
+                width: 100%
+            }
+            th, td {
+                border: 1px solid;
+                padding: 5px;
+            }
+            th {
+                cursor: pointer;
+                background-color: aquamarine;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="text" id="txt" onkeyup="if(event.key === 'Enter') { filter(); }"/><button onClick="filter();">검색</button>
+        <table>
+            <thead>
+                <tr>
+                    <th data-sort-key="name">Name</th>
+                    <th data-sort-key="age">Age</th>
+                    <th data-sort-key="company">Company</th>
+                    <th data-sort-key="email">Email</th>
+                    <th data-sort-key="phone">Phone</th>
+                    <th data-sort-key="address">Address</th>
+                </tr>
+            </thead>
+            <tbody id="user_tb"></tbody>
+        </table>
+        <script src="user-data.js"></script>
+        <script>
+            function render(id, data) {
+                const htmlResult = [];
+                for (const user of data) {
+                    htmlResult.push("<tr>");
+                    htmlResult.push(`<td>${user.name}</td>`);
+                    htmlResult.push(`<td>${user.age}</td>`);
+                    htmlResult.push(`<td>${user.company}</td>`);
+                    htmlResult.push(`<td>${user.email}</td>`);
+                    htmlResult.push(`<td>${user.phone}</td>`);
+                    htmlResult.push(`<td>${user.address}</td>`);
+                    htmlResult.push("</tr>");
+                }
+
+                document.getElementById(id).innerHTML = htmlResult.join('');
+            }
+
+            let lastSortKey = '';
+            let asc = true;
+
+            function sort(columnKey) {
+                if (columnKey === lastSortKey) asc = !asc;
+
+                let sortValue = asc ? 1 : -1;
+                const sortData = currentData.sort(function (a, b) {
+                    let aValue = a[columnKey];
+                    let bValue = b[columnKey];
+
+                    // 숫자인 경우 숫자 비교 로직 적용 (sort함수는 유니코드 순서에 따라 정렬하기에 숫자인 경우 문제발생)
+                    if (typeof aValue === 'number' && typeof bValue === 'number') {
+                        return (aValue - bValue) * sortValue;
+                    }
+
+                    // 문자열인 경우 문자열 비교 로직 적용
+                    return aValue > bValue 
+                    ? sortValue
+                    : aValue < bValue
+                    ? sortValue * -1
+                    : 0;
+                });
+
+                render('user_tb', sortData);
+                lastSortKey = columnKey;
+            }
+
+            function filter() {
+                const txt = document.getElementById('txt').value;
+
+                if (txt === '') {
+                    currentData = userList;
+                    render('user_tb', currentData); // 초기화
+                } else {
+                    const regexp = new RegExp(txt, 'i');// 대소문자구분 없이 
+                    currentData = userList.filter(
+                        (user) => 
+                            regexp.test(user.name) ||
+                            regexp.test(user.company) ||
+                            regexp.test(user.email) ||
+                            regexp.test(user.phone) ||
+                            regexp.test(user.address)
+                    );
+
+                    render('user_tb', currentData);
+                }
+            }
+
+            let currentData = userList;
+
+            window.addEventListener('load', function() {
+                document.querySelectorAll('th[data-sort-key]').forEach((th) => {
+                    th.addEventListener('click', function() {
+                        sort(th.getAttribute('data-sort-key'));
+                    });
+                });
+
+                render('user_tb', currentData);
+            })
+        </script>
+    </body>
+</html>
